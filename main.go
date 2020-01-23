@@ -33,9 +33,10 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 		log.Fatal(err)
 	}
 
-	threeDaysAgo := time.Now().AddDate(0, 0, -2)
+	threeDaysAgo := time.Now().AddDate(0, 0, -3)
 	destroyed := 0
 
+	// Delete any tweet older than three days.
 	for _, tweet := range tweets {
 		tweetTime, _ := time.Parse(time.RubyDate, tweet.CreatedAt)
 		if tweetTime.Before(threeDaysAgo) {
