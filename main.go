@@ -26,9 +26,7 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 	httpClient := config.Client(context.Background(), token)
 	client := twitter.NewClient(httpClient)
 
-	userTimelineParams := &twitter.UserTimelineParams{}
-
-	tweets, resp, err := client.Timelines.UserTimeline(userTimelineParams)
+	tweets, resp, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{})
 	if err != nil {
 		log.Fatal(err)
 	}
