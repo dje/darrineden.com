@@ -1,4 +1,4 @@
+elm-stuff/
 functions/
-
-# Local Netlify folder
 .netlify
+site/elm.js
