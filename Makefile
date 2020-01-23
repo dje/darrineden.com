@@ -1,4 +1,6 @@
-build : install-elm build-elm build-functions
+.PHONY: build clean build-elm build-functions
+
+build : node_modules/.bin/elm build-elm build-functions
 
 build-elm :
 	./node_modules/.bin/elm make Main.elm --output=site/elm.js
@@ -10,5 +12,5 @@ build-functions :
 clean :
 	rm -rf site/elm.js functions node_modules elm-stuff
 
-install-elm :
+node_modules/.bin/elm :
 	npm install
