@@ -52,7 +52,6 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 				destroyed++
 			}
 		}
-
 	}
 
 	return events.APIGatewayProxyResponse{
