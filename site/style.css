@@ -1,0 +1,7 @@
+h1 {
+    font-size: calc(2rem + 1vw);
+}
+
+p, a {
+    font-size: calc(1rem + 0.75vw);
+}
