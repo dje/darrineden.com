@@ -1,8 +1,9 @@
 module Main exposing (main)
 
-import Browser exposing (..)
+import Browser exposing (Document, document)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Url.Builder exposing (absolute, crossOrigin)
 
 
 type alias Model =
@@ -50,11 +51,26 @@ view _ =
             [ h1 [] [ text "Hi There, Nice to meet you." ]
             , p [] [ text "Want to know more about me? Here are some places to connect:" ]
             , ul []
-                [ li [] [ a [ href "https://twitter.com/DarrinEden" ] [ text "Twitter" ] ]
-                , li [] [ a [ href "https://www.linkedin.com/in/darrin-eden-99b65719b/" ] [ text "LinkedIn" ] ]
-                , li [] [ a [ href "https://storage.googleapis.com/darrineden/Darrin-Eden-Resume.pdf" ] [ text "Résumé" ] ]
-                , li [] [ a [ href "https://www.instagram.com/darrin.eden/" ] [ text "Instagram" ] ]
-                , li [] [ a [ href "https://github.com/dje" ] [ text "GitHub" ] ]
+                [ li []
+                    [ a [ href (crossOrigin "https://twitter.com" [ "DarrinEden" ] []) ]
+                        [ text "Twitter" ]
+                    ]
+                , li []
+                    [ a [ href (crossOrigin "https://www.linkedin.com" [ "in", "darrin-eden" ] []) ]
+                        [ text "LinkedIn" ]
+                    ]
+                , li []
+                    [ a [ href (absolute [ "resume" ] []) ]
+                        [ text "Résumé" ]
+                    ]
+                , li []
+                    [ a [ href (crossOrigin "https://www.instagram.com" [ "darrin.eden" ] []) ]
+                        [ text "Instagram" ]
+                    ]
+                , li []
+                    [ a [ href (crossOrigin "https://github.com" [ "dje" ] []) ]
+                        [ text "GitHub" ]
+                    ]
                 ]
             , p [] [ text "Thanks for visiting!" ]
             , p []

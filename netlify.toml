@@ -4,3 +4,6 @@
   publish = "site"
 [build.environment]
   GO_IMPORT_PATH = "github.com/dje/darrineden.com"
+[[redirects]]
+  from = "/resume"
+  to = "https://storage.googleapis.com/darrineden/Darrin-Eden-Resume.pdf"
