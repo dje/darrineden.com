@@ -78,7 +78,7 @@ view _ =
                 , br [] []
                 , text "Darrin"
                 ]
-            , p [] [ text "Last update: 2020/01/23" ]
+            , p [] [ text "Last update: February 4, 2020" ]
             ]
         ]
     }
