@@ -52,6 +52,7 @@ view _ =
             , ul []
                 [ li [] [ a [ href "https://twitter.com/DarrinEden" ] [ text "Twitter" ] ]
                 , li [] [ a [ href "https://www.linkedin.com/in/darrin-eden-99b65719b/" ] [ text "LinkedIn" ] ]
+                , li [] [ a [ href "https://storage.googleapis.com/darrineden/Darrin-Eden-Resume.pdf" ] [ text "Résumé" ] ]
                 , li [] [ a [ href "https://www.instagram.com/darrin.eden/" ] [ text "Instagram" ] ]
                 , li [] [ a [ href "mailto:darrin.eden@gmail.com" ] [ text "darrin.eden@gmail.com" ] ]
                 , li [] [ a [ href "https://github.com/dje" ] [ text "GitHub" ] ]
