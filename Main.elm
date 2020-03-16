@@ -66,10 +66,9 @@ view _ =
                         [ text "LinkedIn" ]
                     ]
                 , li []
-                    [ text "Résumé ("
-                    , a [ href (absolute [ "resume" ] []) ]
-                        [ text "Word" ]
-                    , text ") ("
+                    [ a [ href (absolute [ "resume" ] []) ]
+                        [ text "Résumé (word)" ]
+                    , text " "
                     , a
                         [ href
                             (crossOrigin "https://storage.cloud.google.com"
@@ -77,8 +76,7 @@ view _ =
                                 []
                             )
                         ]
-                        [ text "PDF" ]
-                    , text ")"
+                        [ text "(pdf)" ]
                     ]
                 , li []
                     [ a
