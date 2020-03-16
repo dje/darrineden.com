@@ -52,23 +52,46 @@ view _ =
             , p [] [ text "Want to know more about me? Here are some places to connect:" ]
             , ul []
                 [ li []
-                    [ a [ href (crossOrigin "https://twitter.com" [ "DarrinEden" ] []) ]
+                    [ a
+                        [ href
+                            (crossOrigin "https://twitter.com" [ "DarrinEden" ] [])
+                        ]
                         [ text "Twitter" ]
                     ]
                 , li []
-                    [ a [ href (crossOrigin "https://www.linkedin.com" [ "in", "darrin-eden" ] []) ]
+                    [ a
+                        [ href
+                            (crossOrigin "https://www.linkedin.com" [ "in", "darrin-eden" ] [])
+                        ]
                         [ text "LinkedIn" ]
                     ]
                 , li []
-                    [ a [ href (absolute [ "resume" ] []) ]
-                        [ text "Résumé" ]
+                    [ text "Résumé ("
+                    , a [ href (absolute [ "resume" ] []) ]
+                        [ text "Word" ]
+                    , text ") ("
+                    , a
+                        [ href
+                            (crossOrigin "https://storage.cloud.google.com"
+                                [ "darrineden", "Darrin_Eden_Resume.pdf" ]
+                                []
+                            )
+                        ]
+                        [ text "PDF" ]
+                    , text ")"
                     ]
                 , li []
-                    [ a [ href (crossOrigin "https://www.instagram.com" [ "darrin.eden" ] []) ]
+                    [ a
+                        [ href
+                            (crossOrigin "https://www.instagram.com" [ "darrin.eden" ] [])
+                        ]
                         [ text "Instagram" ]
                     ]
                 , li []
-                    [ a [ href (crossOrigin "https://github.com" [ "dje" ] []) ]
+                    [ a
+                        [ href
+                            (crossOrigin "https://github.com" [ "dje" ] [])
+                        ]
                         [ text "GitHub" ]
                     ]
                 ]
