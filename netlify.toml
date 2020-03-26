@@ -6,4 +6,4 @@
   GO_IMPORT_PATH = "github.com/dje/darrineden.com"
 [[redirects]]
   from = "/resume"
-  to = "https://storage.cloud.google.com/darrineden/Darrin_Eden_Resume.docx"
+  to = "https://storage.googleapis.com/darrineden/Darrin_Eden_Resume.docx"

@@ -71,7 +71,7 @@ view _ =
                     , text " "
                     , a
                         [ href
-                            (crossOrigin "https://storage.cloud.google.com"
+                            (crossOrigin "https://storage.googleapis.com"
                                 [ "darrineden", "Darrin_Eden_Resume.pdf" ]
                                 []
                             )
