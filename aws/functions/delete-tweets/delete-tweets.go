@@ -4,23 +4,26 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 )
 
 func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	ssmsvc := ssm.New(session.Must(session.NewSession()))
+
 	config := oauth1.NewConfig(
-		os.Getenv("TWITTER_CLIENT_ID"),
-		os.Getenv("TWITTER_CLIENT_SECRET"),
+		getSecret(ssmsvc, "/DeleteTweets/TwitterClientId"),
+		getSecret(ssmsvc, "/DeleteTweets/TwitterClientSecret"),
 	)
 	token := oauth1.NewToken(
-		os.Getenv("TWITTER_ACCESS_TOKEN"),
-		os.Getenv("TWITTER_ACCESS_SECRET"),
+		getSecret(ssmsvc, "/DeleteTweets/TwitterAccessToken"),
+		getSecret(ssmsvc, "/DeleteTweets/TwitterAccessSecret"),
 	)
 
 	httpClient := config.Client(context.Background(), token)
@@ -31,13 +34,13 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 		log.Fatal(err)
 	}
 
-	threeDaysAgo := time.Now().AddDate(0, 0, -3)
+	fourDaysAgo := time.Now().AddDate(0, 0, -4)
 	destroyed := 0
 
 	// Delete any tweet older than three days.
 	for _, tweet := range tweets {
 		tweetTime, _ := time.Parse(time.RubyDate, tweet.CreatedAt)
-		if tweetTime.Before(threeDaysAgo) {
+		if tweetTime.Before(fourDaysAgo) {
 			if tweet.Retweeted {
 				_, _, err := client.Statuses.Unretweet(tweet.ID, &twitter.StatusUnretweetParams{})
 				if err != nil {
@@ -62,4 +65,17 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 
 func main() {
 	lambda.Start(handler)
+}
+
+func getSecret(s *ssm.SSM, keyName string) string {
+	withDecryption := true
+	param, err := s.GetParameter(&ssm.GetParameterInput{
+		Name:           &keyName,
+		WithDecryption: &withDecryption,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	return *param.Parameter.Value
 }

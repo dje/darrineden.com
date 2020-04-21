@@ -6,7 +6,7 @@ build-elm :
 	./node_modules/.bin/elm make Main.elm --output=site/elm.js
 
 clean :
-	rm -rf site/elm.js functions node_modules elm-stuff
+	rm -rf site/elm.js node_modules elm-stuff
 
 node_modules/.bin/elm :
 	npm install

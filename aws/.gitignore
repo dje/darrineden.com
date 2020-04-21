@@ -1,0 +1,4 @@
+vendor/
+.env
+cdk.out/
+functions/build/
