@@ -36,7 +36,7 @@ put-secrets :
 		--value "$(TWITTER_ACCESS_TOKEN)" \
 		--type "SecureString" \
 		--overwrite && \
-  	aws ssm put-parameter \
+	aws ssm put-parameter \
 		--name "/DeleteTweets/TwitterAccessSecret" \
 		--value "$(TWITTER_ACCESS_SECRET)" \
 		--type "SecureString" \
