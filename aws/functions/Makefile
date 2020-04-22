@@ -1,12 +1,16 @@
-TWITTER_CLIENT_ID ?= SomeTwitterClientId
-TWITTER_CLIENT_SECRET ?= SomeTwitterClientSecret
+build-functions: build/delete-tweets.zip build/trace-store.zip
 
-TWITTER_ACCESS_TOKEN ?= SomeTwitterAccessToken
-TWITTER_ACCESS_SECRET ?= SomeTwitterAccessSecret
+build/trace-store.zip : build/trace-store
+	cd build && \
+	zip trace-store.zip trace-store
 
 build/delete-tweets.zip : build/delete-tweets
 	cd build && \
 	zip delete-tweets.zip delete-tweets
+
+build/trace-store : build
+	cd trace-store && \
+	GOOS=linux go build -o ../build/trace-store trace-store.go
 
 build/delete-tweets : build
 	cd delete-tweets && \
@@ -17,6 +21,13 @@ build :
 
 clean :
 	rm -r build
+
+# Put and Delete Secrets
+TWITTER_CLIENT_ID ?= SomeTwitterClientId
+TWITTER_CLIENT_SECRET ?= SomeTwitterClientSecret
+
+TWITTER_ACCESS_TOKEN ?= SomeTwitterAccessToken
+TWITTER_ACCESS_SECRET ?= SomeTwitterAccessSecret
 
 .PHONY : put-secrets
 put-secrets :
