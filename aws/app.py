@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 from aws_cdk import (core,
-                     aws_apigateway as apigw,
+                     aws_apigatewayv2 as apigw,
                      aws_events as events,
+                     aws_events_targets as targets,
                      aws_dynamodb as dynamodb,
+                     aws_iam as iam,
                      aws_lambda as lambda_,
                      aws_logs as logs,
-                     aws_ssm as ssm,
-                     aws_events_targets as targets)
+                     aws_ssm as ssm)
 
 
 class DeleteTweetsStack(core.Stack):
@@ -17,8 +18,8 @@ class DeleteTweetsStack(core.Stack):
         delete_tweets = lambda_.Function(self, "DeleteTweetsHandler",
                                          runtime=lambda_.Runtime.GO_1_X,
                                          code=lambda_.Code.from_asset("functions/build/delete-tweets.zip"),
-                                         handler="delete-tweets",
-                                         log_retention=logs.RetentionDays.ONE_DAY)
+                                         log_retention=logs.RetentionDays.ONE_WEEK,
+                                         handler="delete-tweets")
 
         [ssm.StringParameter.from_secure_string_parameter_attributes(
             self, f"Twitter{i}Value",
@@ -30,8 +31,8 @@ class DeleteTweetsStack(core.Stack):
                    "AccessSecret"]
          ]
 
-        events.Rule(self, "DeleteTweetsHourlyEvent",
-                    schedule=events.Schedule.cron(minute="0"),
+        events.Rule(self, "DeleteTweetsDailyEvent",
+                    schedule=events.Schedule.cron(minute="0", hour="0"),
                     targets=[targets.LambdaFunction(delete_tweets)])
 
 
@@ -53,8 +54,7 @@ class TraceStoreStack(core.Stack):
         trace_lambda = lambda_.Function(self, "TraceStoreHandler",
                                         runtime=lambda_.Runtime.GO_1_X,
                                         code=lambda_.Code.from_asset("functions/build/trace-store.zip"),
-                                        handler="trace-store",
-                                        log_retention=logs.RetentionDays.ONE_DAY)
+                                        handler="trace-store")
 
         trace_lambda.add_environment("TABLE_NAME", spans_table.table_name)
 
@@ -64,15 +64,18 @@ class TraceStoreStack(core.Stack):
                                   removal_policy=core.RemovalPolicy.DESTROY,
                                   retention=logs.RetentionDays.ONE_WEEK)
 
-        api = apigw.RestApi(self, "trace-api",
-                            deploy_options=apigw.StageOptions(
-                                access_log_destination=apigw.LogGroupLogDestination(log_group),
-                                logging_level=apigw.MethodLoggingLevel.INFO),
-                            rest_api_name="Trace Store Service",
-                            description="This service stores traces.")
+        trace_api = apigw.CfnApi(self, "TraceStoreApi",
+                                 name="Trace Store Service",
+                                 protocol_type="HTTP",
+                                 target=trace_lambda.function_arn,
+                                 credentials_arn=None,
+                                 description="A service to store traces.")
 
-        trace = api.root.add_resource("trace")
-        trace.add_method("POST", apigw.LambdaIntegration(trace_lambda))
+        policy = iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["lambda:InvokeFunction"],
+            resources=[]
+        )
 
 
 app = core.App()

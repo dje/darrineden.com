@@ -1,11 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -18,15 +19,20 @@ import (
 
 const ttlExpireDays = 18 * (time.Hour * 24)
 
-func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	var t WebTraceOpenCensus
 
-	htmlHeader := make(map[string]string)
-	htmlHeader["Content-Type"] = "text/html"
-
-	err := json.NewDecoder(strings.NewReader(req.Body)).Decode(&t)
+	decoded, err := base64.StdEncoding.DecodeString(req.Body)
 	if err != nil {
-		return events.APIGatewayProxyResponse{
+		return events.APIGatewayV2HTTPResponse{
+			Body:       fmt.Sprintf("Cannot decode request: %s", err.Error()),
+			StatusCode: 500,
+		}, nil
+	}
+
+	err = json.NewDecoder(bytes.NewReader(decoded)).Decode(&t)
+	if err != nil {
+		return events.APIGatewayV2HTTPResponse{
 			Body:       fmt.Sprintf("Cannot decode JSON: %s", err.Error()),
 			StatusCode: 400,
 		}, nil
@@ -38,7 +44,7 @@ func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 	for _, span := range t.Spans {
 		av, err := dynamodbattribute.MarshalMap(span)
 		if err != nil {
-			return events.APIGatewayProxyResponse{
+			return events.APIGatewayV2HTTPResponse{
 				Body:       fmt.Sprintf("Cannot marshal span to db: %s", err.Error()),
 				StatusCode: 500,
 			}, nil
@@ -53,16 +59,15 @@ func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 			Item:      av,
 		})
 		if err != nil {
-			return events.APIGatewayProxyResponse{
+			return events.APIGatewayV2HTTPResponse{
 				Body:       fmt.Sprintf("Cannot put span item into db: %s", err.Error()),
 				StatusCode: 500,
 			}, nil
 		}
 
 	}
-	return events.APIGatewayProxyResponse{
-		Body:       "Trace stored successfully",
-		Headers:    htmlHeader,
+	return events.APIGatewayV2HTTPResponse{
+		Body:       `{"message": "Trace stored successfully"}`,
 		StatusCode: 200,
 	}, nil
 }
