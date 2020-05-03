@@ -78,11 +78,10 @@ class TraceStoreStack(core.Stack):
                                  description="A service to store traces.")
 
         # trace_stage = apigw.CfnStage(self, "TraceStoreStage",
-        #                              api_id=trace_api_id,
+        #                              api_id=core.Fn.ref(trace_api.logical_id),
         #                              stage_name="$default",
         #                              access_log_settings=apigw.CfnStage.AccessLogSettingsProperty(
-        #                                  destination_arn=log_group.log_group_arn
-        #                              ))
+        #                                  destination_arn=log_group.log_group_arn))
 
         certificate_arn = ssm.StringParameter.value_for_string_parameter(self, "/TraceStore/CertificateARN")
 
@@ -91,10 +90,9 @@ class TraceStoreStack(core.Stack):
                                      domain_name_configurations=[
                                          apigw.CfnDomainName.DomainNameConfigurationProperty(
                                              certificate_arn=certificate_arn,
-                                             certificate_name="api.darrineden.com"
-                                         )])
+                                             certificate_name="api.darrineden.com")])
 
-        domain_map = apigw.CfnApiMapping(self, "TraceStoreAPIMap",
+        domain_map = apigw.CfnApiMapping(self, "TraceStoreApiMap",
                                          api_id=core.Fn.ref(trace_api.logical_id),
                                          domain_name="api.darrineden.com",
                                          stage="$default")
