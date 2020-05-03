@@ -54,6 +54,7 @@ class TraceStoreStack(core.Stack):
         trace_lambda = lambda_.Function(self, "TraceStoreHandler",
                                         runtime=lambda_.Runtime.GO_1_X,
                                         code=lambda_.Code.from_asset("functions/build/trace-store.zip"),
+                                        log_retention=logs.RetentionDays.ONE_WEEK,
                                         handler="trace-store")
 
         trace_lambda.add_environment("TABLE_NAME", spans_table.table_name)
@@ -64,18 +65,26 @@ class TraceStoreStack(core.Stack):
                                   removal_policy=core.RemovalPolicy.DESTROY,
                                   retention=logs.RetentionDays.ONE_WEEK)
 
+        role = iam.Role(self, "TraceStoreApiGwRole",
+                        assumed_by=iam.ServicePrincipal("apigateway.amazonaws.com"))
+
+        trace_lambda.grant_invoke(role)
+
         trace_api = apigw.CfnApi(self, "TraceStoreApi",
                                  name="Trace Store Service",
                                  protocol_type="HTTP",
                                  target=trace_lambda.function_arn,
-                                 credentials_arn=None,
+                                 credentials_arn=role.role_arn,
                                  description="A service to store traces.")
 
-        policy = iam.PolicyStatement(
-            effect=iam.Effect.ALLOW,
-            actions=["lambda:InvokeFunction"],
-            resources=[]
-        )
+        # trace_api_id = core.Fn.get_att(trace_api.logical_id, "apiId").to_string()
+        #
+        # trace_stage = apigw.CfnStage(self, "TraceStoreStage",
+        #                              api_id=trace_api_id,
+        #                              stage_name="$default",
+        #                              access_log_settings=apigw.CfnStage.AccessLogSettingsProperty(
+        #                                  destination_arn=log_group.log_group_arn
+        #                              ))
 
 
 app = core.App()
