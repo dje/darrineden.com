@@ -64,3 +64,10 @@ delete-secrets :
 		--name "/DeleteTweets/TwitterAccessToken" && \
 	aws ssm delete-parameter \
 		--name "/DeleteTweets/TwitterAccessSecret"
+
+.PHONY : request-certificate
+request-certificate :
+	aws acm request-certificate --domain-name api.darrineden.com \
+		--validation-method DNS \
+		--options CertificateTransparencyLoggingPreference=DISABLED \
+		--idempotency-token someRandomToken
