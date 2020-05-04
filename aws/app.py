@@ -72,6 +72,7 @@ class TraceStoreStack(core.Stack):
 
         trace_api = apigw.CfnApi(self, "TraceStoreApi",
                                  name="Trace Store Service",
+                                 route_key="POST /trace",
                                  protocol_type="HTTP",
                                  cors_configuration=apigw.CfnApi.CorsProperty(
                                      allow_origins=["https://darrineden.com"]),
