@@ -74,8 +74,7 @@ class TraceStoreStack(core.Stack):
                                  name="Trace Store Service",
                                  protocol_type="HTTP",
                                  cors_configuration=apigw.CfnApi.CorsProperty(
-                                     allow_origins=["https://darrineden.com"]
-                                 ),
+                                     allow_origins=["https://darrineden.com"]),
                                  target=trace_lambda.function_arn,
                                  credentials_arn=role.role_arn,
                                  description="A service to store traces.")
