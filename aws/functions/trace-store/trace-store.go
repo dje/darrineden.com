@@ -1,12 +1,11 @@
 package main
 
 import (
-	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -20,17 +19,9 @@ import (
 const ttlExpireDays = 18 * (time.Hour * 24)
 
 func handler(req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	var t WebTraceOpenCensus
+	var t WebTrace
 
-	decoded, err := base64.StdEncoding.DecodeString(req.Body)
-	if err != nil {
-		return events.APIGatewayV2HTTPResponse{
-			Body:       fmt.Sprintf("Cannot decode request: %s", err.Error()),
-			StatusCode: 500,
-		}, nil
-	}
-
-	err = json.NewDecoder(bytes.NewReader(decoded)).Decode(&t)
+	err := json.NewDecoder(strings.NewReader(req.Body)).Decode(&t)
 	if err != nil {
 		return events.APIGatewayV2HTTPResponse{
 			Body:       fmt.Sprintf("Cannot decode JSON: %s", err.Error()),
@@ -41,31 +32,36 @@ func handler(req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPRespons
 	dbsvc := dynamodb.New(session.Must(session.NewSession()))
 
 	ttl := time.Now().Add(ttlExpireDays).Unix()
-	for _, span := range t.Spans {
-		av, err := dynamodbattribute.MarshalMap(span)
-		if err != nil {
-			return events.APIGatewayV2HTTPResponse{
-				Body:       fmt.Sprintf("Cannot marshal span to db: %s", err.Error()),
-				StatusCode: 500,
-			}, nil
-		}
 
-		av["ttl"] = &dynamodb.AttributeValue{
-			N: aws.String(strconv.FormatInt(ttl, 10)),
-		}
+	for _, rs := range t.ResourceSpans {
+		for _, ils := range rs.InstrumentationLibrarySpans {
+			for _, span := range ils.Spans {
+				av, err := dynamodbattribute.MarshalMap(span)
+				if err != nil {
+					return events.APIGatewayV2HTTPResponse{
+						Body:       fmt.Sprintf("Cannot marshal span to db: %s", err.Error()),
+						StatusCode: 500,
+					}, nil
+				}
 
-		_, err = dbsvc.PutItem(&dynamodb.PutItemInput{
-			TableName: aws.String(os.Getenv("TABLE_NAME")),
-			Item:      av,
-		})
-		if err != nil {
-			return events.APIGatewayV2HTTPResponse{
-				Body:       fmt.Sprintf("Cannot put span item into db: %s", err.Error()),
-				StatusCode: 500,
-			}, nil
-		}
+				av["ttl"] = &dynamodb.AttributeValue{
+					N: aws.String(strconv.FormatInt(ttl, 10)),
+				}
 
+				_, err = dbsvc.PutItem(&dynamodb.PutItemInput{
+					TableName: aws.String(os.Getenv("TABLE_NAME")),
+					Item:      av,
+				})
+				if err != nil {
+					return events.APIGatewayV2HTTPResponse{
+						Body:       fmt.Sprintf("Cannot put span item into db: %s", err.Error()),
+						StatusCode: 500,
+					}, nil
+				}
+			}
+		}
 	}
+
 	return events.APIGatewayV2HTTPResponse{
 		Body:       `{"message": "Trace stored successfully"}`,
 		StatusCode: 200,
@@ -76,56 +72,48 @@ func main() {
 	lambda.Start(handler)
 }
 
-type WebTraceOpenCensus struct {
-	Node struct {
-		Identifier struct {
-			HostName       string    `json:"hostName"`
-			StartTimestamp time.Time `json:"startTimestamp"`
-		} `json:"identifier"`
-		LibraryInfo struct {
-			Language           int    `json:"language"`
-			CoreLibraryVersion string `json:"coreLibraryVersion"`
-			ExporterVersion    string `json:"exporterVersion"`
-		} `json:"libraryInfo"`
-		ServiceInfo struct {
-			Name string `json:"name"`
-		} `json:"serviceInfo"`
-	} `json:"node"`
-	Resource struct {
-		Labels struct {
-			TelemetrySdkLanguage string `json:"telemetry.sdk.language"`
-			TelemetrySdkName     string `json:"telemetry.sdk.name"`
-			TelemetrySdkVersion  string `json:"telemetry.sdk.version"`
-		} `json:"labels"`
-	} `json:"resource"`
-	Spans []struct {
-		TraceID    string `json:"traceId"`
-		SpanID     string `json:"spanId"`
-		Tracestate struct {
-		} `json:"tracestate"`
-		Name struct {
-			Value              string `json:"value"`
-			TruncatedByteCount int    `json:"truncatedByteCount"`
-		} `json:"name"`
-		Kind       int       `json:"kind"`
-		StartTime  time.Time `json:"startTime"`
-		EndTime    time.Time `json:"endTime"`
-		Attributes struct {
+type WebTrace struct {
+	ResourceSpans []struct {
+		Resource struct {
+			Attributes []struct {
+				Key         string `json:"key"`
+				Type        int    `json:"type"`
+				StringValue string `json:"stringValue"`
+			} `json:"attributes"`
 			DroppedAttributesCount int `json:"droppedAttributesCount"`
-			AttributeMap           json.RawMessage
-		} `json:"attributes"`
-		TimeEvents struct {
-			TimeEvent                 []interface{} `json:"timeEvent"`
-			DroppedAnnotationsCount   int           `json:"droppedAnnotationsCount"`
-			DroppedMessageEventsCount int           `json:"droppedMessageEventsCount"`
-		} `json:"timeEvents"`
-		Status struct {
-			Code int `json:"code"`
-		} `json:"status"`
-		SameProcessAsParentSpan bool `json:"sameProcessAsParentSpan"`
-		Links                   struct {
-			Link              []interface{} `json:"link"`
-			DroppedLinksCount int           `json:"droppedLinksCount"`
-		} `json:"links"`
-	} `json:"spans"`
+		} `json:"resource"`
+		InstrumentationLibrarySpans []struct {
+			Spans []struct {
+				TraceID           string `json:"traceId"`
+				SpanID            string `json:"spanId"`
+				ParentSpanID      string `json:"parentSpanId"`
+				Name              string `json:"name"`
+				Kind              int    `json:"kind"`
+				StartTimeUnixNano int64  `json:"startTimeUnixNano"`
+				EndTimeUnixNano   int64  `json:"endTimeUnixNano"`
+				Attributes        []struct {
+					Key         string `json:"key"`
+					Type        int    `json:"type"`
+					StringValue string `json:"stringValue"`
+				} `json:"attributes"`
+				DroppedAttributesCount int `json:"droppedAttributesCount"`
+				Events                 []struct {
+					TimeUnixNano           int64         `json:"timeUnixNano"`
+					Name                   string        `json:"name"`
+					Attributes             []interface{} `json:"attributes"`
+					DroppedAttributesCount int           `json:"droppedAttributesCount"`
+				} `json:"events"`
+				DroppedEventsCount int `json:"droppedEventsCount"`
+				Status             struct {
+					Code int `json:"code"`
+				} `json:"status"`
+				Links             []interface{} `json:"links"`
+				DroppedLinksCount int           `json:"droppedLinksCount"`
+			} `json:"spans"`
+			InstrumentationLibrary struct {
+				Name    string `json:"name"`
+				Version string `json:"version"`
+			} `json:"instrumentationLibrary"`
+		} `json:"instrumentationLibrarySpans"`
+	} `json:"resourceSpans"`
 }

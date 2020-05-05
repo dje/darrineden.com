@@ -1,3 +1,5 @@
+### Build Tasks
+
 build-functions: build/delete-tweets.zip build/trace-store.zip
 
 build/trace-store.zip : build/trace-store
@@ -19,10 +21,12 @@ build/delete-tweets : build
 build :
 	mkdir build
 
+.PHONY : clean
 clean :
 	rm -r build
 
-# Put and Delete Secrets
+### AWS Command Tasks (Secrets and Certificate)
+
 TWITTER_CLIENT_ID ?= SomeTwitterClientId
 TWITTER_CLIENT_SECRET ?= SomeTwitterClientSecret
 

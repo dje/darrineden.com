@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 
 from aws_cdk import (core,
                      aws_apigatewayv2 as apigw,
@@ -8,7 +9,16 @@ from aws_cdk import (core,
                      aws_iam as iam,
                      aws_lambda as lambda_,
                      aws_logs as logs,
+                     aws_route53 as route53,
                      aws_ssm as ssm)
+
+
+class DomainStack(core.Stack):
+    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+        super().__init__(scope, id, **kwargs)
+
+        route53.PublicHostedZone(self, "DarrinEdenZone",
+                                 zone_name="darrineden.com")
 
 
 class DeleteTweetsStack(core.Stack):
@@ -45,8 +55,8 @@ class TraceStoreStack(core.Stack):
                                          name="traceId",
                                          type=dynamodb.AttributeType.STRING),
                                      sort_key=dynamodb.Attribute(
-                                         name="startTime",
-                                         type=dynamodb.AttributeType.STRING),
+                                         name="startTimeUnixNano",
+                                         type=dynamodb.AttributeType.NUMBER),
                                      time_to_live_attribute="ttl",
                                      billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
                                      removal_policy=core.RemovalPolicy.DESTROY)
@@ -86,24 +96,38 @@ class TraceStoreStack(core.Stack):
         #                              access_log_settings=apigw.CfnStage.AccessLogSettingsProperty(
         #                                  destination_arn=log_group.log_group_arn))
 
-        certificate_arn = ssm.StringParameter.value_for_string_parameter(self, "/TraceStore/CertificateARN")
-
         domain = apigw.CfnDomainName(self, "DarrinEdenApiDomain",
                                      domain_name="api.darrineden.com",
                                      domain_name_configurations=[
                                          apigw.CfnDomainName.DomainNameConfigurationProperty(
-                                             certificate_arn=certificate_arn,
+                                             certificate_arn=ssm.StringParameter.
+                                                 value_for_string_parameter(self, "/TraceStore/CertificateARN"),
                                              certificate_name="api.darrineden.com")])
 
+        trace_api_id = core.Fn.ref(trace_api.logical_id)
+
         domain_map = apigw.CfnApiMapping(self, "TraceStoreApiMap",
-                                         api_id=core.Fn.ref(trace_api.logical_id),
+                                         api_id=trace_api_id,
                                          domain_name="api.darrineden.com",
                                          stage="$default")
+
+        zone = route53.HostedZone.from_lookup(self, "DarrinEdenZone",
+                                              domain_name="darrineden.com")
+
+        record = route53.CnameRecord(self, "DarrinEdenApiDnsRecord",
+                                     zone=zone,
+                                     domain_name=trace_api_id + ".execute-api.us-west-2.amazonaws.com",
+                                     record_name="api",
+                                     ttl=core.Duration.minutes(1))
 
 
 app = core.App()
 
+env = core.Environment(account=os.environ["CDK_DEFAULT_ACCOUNT"],
+                       region=os.environ["CDK_DEFAULT_REGION"])
+
+DomainStack(app, "Domain")
 DeleteTweetsStack(app, "DeleteTweets")
-TraceStoreStack(app, "TraceStore")
+TraceStoreStack(app, "TraceStore", env=env)
 
 app.synth()
