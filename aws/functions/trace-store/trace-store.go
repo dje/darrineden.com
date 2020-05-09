@@ -63,7 +63,11 @@ func handler(req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPRespons
 	}
 
 	return events.APIGatewayV2HTTPResponse{
-		Body:       `{"message": "Trace stored successfully"}`,
+		Body: `{"message": "Trace stored successfully"}`,
+		Headers: map[string]string{
+			"Content-Type":           "application/json",
+			"X-Content-Type-Options": "nosniff",
+		},
 		StatusCode: 200,
 	}, nil
 }

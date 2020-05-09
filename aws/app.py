@@ -4,7 +4,7 @@ import os
 from aws_cdk import (core,
                      aws_apigatewayv2 as apigw,
                      aws_events as events,
-                     aws_events_targets as targets,
+                     aws_events_targets as events_targets,
                      aws_dynamodb as dynamodb,
                      aws_iam as iam,
                      aws_lambda as lambda_,
@@ -43,7 +43,7 @@ class DeleteTweetsStack(core.Stack):
 
         events.Rule(self, "DeleteTweetsDailyEvent",
                     schedule=events.Schedule.cron(minute="0", hour="0"),
-                    targets=[targets.LambdaFunction(delete_tweets)])
+                    targets=[events_targets.LambdaFunction(delete_tweets)])
 
 
 class TraceStoreStack(core.Stack):
@@ -71,6 +71,7 @@ class TraceStoreStack(core.Stack):
 
         spans_table.grant(trace_lambda, "dynamodb:PutItem")
 
+        # TODO: How does one connect a LogGroup to an HTTP API Gateway V2?
         log_group = logs.LogGroup(self, "TraceStoreLogGroup",
                                   removal_policy=core.RemovalPolicy.DESTROY,
                                   retention=logs.RetentionDays.ONE_WEEK)
@@ -90,35 +91,24 @@ class TraceStoreStack(core.Stack):
                                  credentials_arn=role.role_arn,
                                  description="A service to store traces.")
 
-        # trace_stage = apigw.CfnStage(self, "TraceStoreStage",
-        #                              api_id=core.Fn.ref(trace_api.logical_id),
-        #                              stage_name="$default",
-        #                              access_log_settings=apigw.CfnStage.AccessLogSettingsProperty(
-        #                                  destination_arn=log_group.log_group_arn))
-
-        domain = apigw.CfnDomainName(self, "DarrinEdenApiDomain",
-                                     domain_name="api.darrineden.com",
-                                     domain_name_configurations=[
-                                         apigw.CfnDomainName.DomainNameConfigurationProperty(
-                                             certificate_arn=ssm.StringParameter.
-                                                 value_for_string_parameter(self, "/TraceStore/CertificateARN"),
-                                             certificate_name="api.darrineden.com")])
+        apigw.CfnDomainName(self, "DarrinEdenApiDomain",
+                            domain_name="api.darrineden.com",
+                            domain_name_configurations=[
+                                apigw.CfnDomainName.DomainNameConfigurationProperty(
+                                    certificate_arn=ssm.StringParameter.
+                                        value_for_string_parameter(self, "/TraceStore/CertificateARN"),
+                                    certificate_name="api.darrineden.com")])
 
         trace_api_id = core.Fn.ref(trace_api.logical_id)
 
-        domain_map = apigw.CfnApiMapping(self, "TraceStoreApiMap",
-                                         api_id=trace_api_id,
-                                         domain_name="api.darrineden.com",
-                                         stage="$default")
+        # TODO: How does one connect a Route53 A record ALIASed to an HTTP API Gateway V2 custom domain mapping?
+        api_mapping = apigw.CfnApiMapping(self, "TraceStoreApiMap",
+                                          api_id=trace_api_id,
+                                          domain_name="api.darrineden.com",
+                                          stage="$default")
 
         zone = route53.HostedZone.from_lookup(self, "DarrinEdenZone",
                                               domain_name="darrineden.com")
-
-        record = route53.CnameRecord(self, "DarrinEdenApiDnsRecord",
-                                     zone=zone,
-                                     domain_name=trace_api_id + ".execute-api.us-west-2.amazonaws.com",
-                                     record_name="api",
-                                     ttl=core.Duration.minutes(1))
 
 
 app = core.App()
