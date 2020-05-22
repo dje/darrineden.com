@@ -99,7 +99,7 @@ view _ =
                 , br [] []
                 , text "Darrin"
                 ]
-            , p [] [ text "Last update: March 26, 2020" ]
+            , p [] [ text "Last update: May 22, 2020" ]
             ]
         ]
     }
