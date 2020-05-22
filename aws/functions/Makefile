@@ -23,7 +23,7 @@ build :
 
 .PHONY : clean
 clean :
-	rm -r build
+	rm -rf build
 
 ### AWS Command Tasks (Secrets and Certificate)
 
