@@ -1,4 +1,4 @@
-# darrineden.com
+# [darrineden.com](https://darrineden.com)
 This is my personal site. I use it to play with technologies I'm curious about.
 
 At the moment that includes [Elm](https://elm-lang.org/), [OpenTelemetry](https://opentelemetry.io/),
