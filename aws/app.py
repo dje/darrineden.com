@@ -42,7 +42,7 @@ class DeleteTweetsStack(core.Stack):
          ]
 
         events.Rule(self, "DeleteTweetsDailyEvent",
-                    schedule=events.Schedule.cron(minute="0", hour="0"),
+                    schedule=events.Schedule.cron(minute="0"),
                     targets=[events_targets.LambdaFunction(delete_tweets)])
 
 
