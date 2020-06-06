@@ -29,7 +29,7 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 	httpClient := config.Client(context.Background(), token)
 	client := twitter.NewClient(httpClient)
 
-	tweets, resp, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{})
+	tweets, resp, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{Count: 100})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,6 +46,7 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 				if err != nil {
 					log.Print(err)
 				}
+
 				destroyed++
 			} else {
 				_, _, err := client.Statuses.Destroy(tweet.ID, &twitter.StatusDestroyParams{})
