@@ -2,8 +2,13 @@
 build :
 	cd functions && $(MAKE) clean build-functions
 
-.PHONY : dev
-dev : .env
+.PHONY : cdk-deps-requirements
+cdk-deps-requirements : .env
+	source .env/bin/activate && \
+	pip install -r requirements.txt
+
+.PHONY : cdk-deps-update
+cdk-deps-update : .env
 	source .env/bin/activate && \
 	pip install pip install \
 		aws-cdk.aws-apigatewayv2 \
@@ -13,7 +18,8 @@ dev : .env
 		aws-cdk.aws-lambda \
 		aws-cdk.aws-logs \
 		aws-cdk.aws-route53 \
-		aws-cdk.aws-ssm
+		aws-cdk.aws-ssm && \
+	pip freeze > requirements.txt
 
 .env :
 	virtualenv .env
