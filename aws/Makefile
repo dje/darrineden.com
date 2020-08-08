@@ -20,7 +20,7 @@ dev : .env
 
 .PHONY : clean
 clean :
-	rm -rf .env
+	rm -rf .env cdk.out cdk.context.json
 	cd functions && $(MAKE) clean
 
 .PHONY : deploy
