@@ -7,7 +7,7 @@ At the moment this includes [React](https://reactjs.org/) with [TypeScript](http
 
 ## Development
 
-Requirements for development include `npm` and `terraform`.
+Requirements for development include `aws`, `npm`, and `terraform`.
 
 To prepare a development environment run:
 
