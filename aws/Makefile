@@ -2,6 +2,9 @@
 build :
 	cd functions && $(MAKE) clean build-functions
 
+.PHONY : dev
+dev : cdk-deps-requirements
+
 .PHONY : cdk-deps-requirements
 cdk-deps-requirements : .env
 	source .env/bin/activate && \
