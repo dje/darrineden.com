@@ -1,6 +1,0 @@
-[build]
-  command = "make build"
-  publish = "site"
-[[redirects]]
-  from = "/resume"
-  to = "https://storage.googleapis.com/darrineden/Darrin_Eden_Resume.docx"
