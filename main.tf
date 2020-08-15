@@ -33,10 +33,22 @@ resource "aws_route53_record" "netlify_record" {
   records = ["104.198.14.52"]
 }
 
-resource "aws_route53_record" "test_record" {
+resource "aws_route53_record" "test_record_ipv4" {
   zone_id = aws_route53_zone.zone.zone_id
   name = "test.darrineden.com"
   type = "A"
+
+  alias {
+    name = aws_cloudfront_distribution.dist.domain_name
+    zone_id = aws_cloudfront_distribution.dist.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "test_record_ipv6" {
+  zone_id = aws_route53_zone.zone.zone_id
+  name = "test.darrineden.com"
+  type = "AAAA"
 
   alias {
     name = aws_cloudfront_distribution.dist.domain_name
