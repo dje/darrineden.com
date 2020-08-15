@@ -86,11 +86,11 @@ resource "aws_route53_record" "record" {
   zone_id = aws_route53_zone.zone.zone_id
 }
 
-resource "aws_acm_certificate_validation" "default" {
+resource "aws_acm_certificate_validation" "validation" {
   provider = aws.east
   certificate_arn = aws_acm_certificate.cert.arn
 
-  validation_record_fqdns =[for record in aws_route53_record.record : record.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.record : record.fqdn]
 }
 
 resource "aws_s3_bucket" "site" {
@@ -144,7 +144,7 @@ resource "aws_cloudfront_distribution" "dist" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate_validation.default.certificate_arn
+    acm_certificate_arn = aws_acm_certificate_validation.validation.certificate_arn
     ssl_support_method = "sni-only"
   }
 }
