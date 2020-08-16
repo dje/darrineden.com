@@ -50,9 +50,12 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Terraform Output CloudFront Distribution
-        id: tfout
-        run: |
-          echo ::set-env name=cfid::$(date)
+        run: echo ::set-env name=cfid::$(terraform output -no-color cfdist)
+        env:
+          TF_IN_AUTOMATION: true
+
+      - name: Echo
+        run: echo ${{ env.cfid }}
 
       - name: Build
         run: make build
@@ -60,9 +63,6 @@ jobs:
       - name: AWS Directory Sync
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: aws s3 sync build s3://darrineden.com/ --delete --acl public-read
-
-      - name: Echo
-        run: echo ${{ env.cfid }}
 
       - name: AWS Invalidate CloudFront Distribution
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
