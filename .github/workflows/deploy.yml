@@ -46,7 +46,7 @@ jobs:
         run: terraform plan
 
       - name: CloudFront ID
-        run: echo ::set-env name=CF_DIST_ID::$(terraform output cfdist)
+        run: echo ::set-env name=CF_DIST_ID::$(echo terraform output cfdist)
 
       - name: Deploy
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
