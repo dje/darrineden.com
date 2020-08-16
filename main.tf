@@ -140,3 +140,7 @@ resource "aws_cloudfront_distribution" "dist" {
     ssl_support_method  = "sni-only"
   }
 }
+
+output "cfdist" {
+  value = aws_cloudfront_distribution.dist.id
+}

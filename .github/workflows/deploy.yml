@@ -7,8 +7,8 @@ on:
   pull_request:
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  deploy:
+    name: 'Deploy'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,6 +33,6 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      - name: Terraform Apply
+      - name: Deploy
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform apply -auto-approve
+        run: make deploy
