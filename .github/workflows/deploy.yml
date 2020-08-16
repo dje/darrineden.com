@@ -51,7 +51,8 @@ jobs:
 
       - name: Terraform Output CloudFront Distribution
         id: tfout
-        run: echo "::set-env name=cfid::$(terraform output -no-color cfdist)"
+        run: |
+          echo ::set-env name=cfid::$(terraform output -no-color cfdist)
 
       - name: Build
         run: make build
