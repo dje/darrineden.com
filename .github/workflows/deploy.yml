@@ -49,8 +49,8 @@ jobs:
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
-      - name: Terraform
-        run: echo "::set-env name=CF_DIST_ID::$(terraform output cfdist)"
+      - name: Terraform Output CloudFront Distribution ID
+        run: terraform output cfdist > CF_DIST_ID
 
       - name: Build
         run: make build
@@ -61,4 +61,6 @@ jobs:
 
       - name: AWS Invalidate CloudFront Distribution
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${{ env.CF_DIST_ID }} --paths "/*"
+        run: |
+          CF_DIST_ID=`cat CF_DIST_ID`
+          AWS_PAGER="" aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"
