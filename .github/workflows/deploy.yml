@@ -45,9 +45,14 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      - name: CloudFront ID
-        run: echo ::set-env name=CF_DIST_ID::$(echo terraform output cfdist)
-
-      - name: Deploy
+      - name: Terraform Apply
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: make deploy
+        run: terraform apply -auto-approve
+
+      - name: AWS Directory Sync
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: aws s3 sync build s3://darrineden.com/ --delete --acl public-read
+
+      - name: AWS Invalidate CloudFront Distribution
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id $(terraform output cfdist) --paths "/*"
