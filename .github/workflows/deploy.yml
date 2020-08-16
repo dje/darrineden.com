@@ -63,4 +63,4 @@ jobs:
 
       - name: AWS Invalidate CloudFront Distribution
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${{ env.cfid }} --paths "/*"
+        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${{ env.cfid.stdout }} --paths "/*"
