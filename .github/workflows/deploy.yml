@@ -50,7 +50,9 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Terraform Output CloudFront Distribution ID
-        run: terraform output cfdist > CF_DIST_ID
+        run: |
+          terraform output cfdist > CF_DIST_ID
+          cat CF_DIST_ID
 
       - name: Build
         run: make build
@@ -62,6 +64,6 @@ jobs:
       - name: AWS Invalidate CloudFront Distribution
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: |
-          tail -1 CF_DIST_ID
+          cat CF_DIST_ID
           CF_DIST_ID=`tail -1 CF_DIST_ID`
           AWS_PAGER="" aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"
