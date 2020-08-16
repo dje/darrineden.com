@@ -66,5 +66,5 @@ jobs:
         run: |
           cat CF_DIST_ID
           export CF_DIST_ID=`tail -1 CF_DIST_ID`
-          echo $CF_DIST_ID
+          echo "CF_DIST_ID: $CF_DIST_ID"
           AWS_PAGER="" aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"
