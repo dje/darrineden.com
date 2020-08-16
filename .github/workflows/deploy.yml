@@ -41,6 +41,7 @@ jobs:
 
       - name: Terraform Format
         run: terraform fmt -check
+        continue-on-error: true
 
       - name: Terraform Plan
         run: terraform plan
@@ -62,4 +63,4 @@ jobs:
 
       - name: AWS Invalidate CloudFront Distribution
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${{ steps.plan.outputs.stdout }} --paths "/*"
+        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${{ steps.cfid.outputs.stdout }} --paths "/*"
