@@ -50,7 +50,9 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Terraform Output CloudFront Distribution ID
-        run: terraform output cfdist > CF_DIST_ID
+        run: |
+          terraform output -no-color cfdist > CF_DIST_ID
+          cat CF_DIST_ID
 
       - name: Build
         run: make build
