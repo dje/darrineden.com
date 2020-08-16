@@ -51,8 +51,7 @@ jobs:
 
       - name: Terraform Output CloudFront Distribution
         id: tfout
-        shell: bash
-        run: echo "::set-output name=cfid::$(terraform output -no-color cfdist)"
+        run: echo "::set-env name=cfid::$(terraform output -no-color cfdist)"
 
       - name: Build
         run: make build
@@ -63,4 +62,4 @@ jobs:
 
       - name: AWS Invalidate CloudFront Distribution
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${{ steps.tfout.outputs.cfid }} --paths "/*"
+        run: AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${{ env.cfid }} --paths "/*"
