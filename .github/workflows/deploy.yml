@@ -1,4 +1,4 @@
-name: 'Integration and Deployment'
+name: 'Deployment'
 
 on:
   push:
@@ -50,7 +50,7 @@ jobs:
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform apply -auto-approve
 
-      - name: Terraform Output CloudFront Distribution ID
+      - name: Terraform CloudFront Distribution ID
         id: cfid
         run: terraform output cfdist
 
