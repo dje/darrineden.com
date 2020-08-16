@@ -14,6 +14,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -32,6 +44,9 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan
+
+      - name: CloudFront ID
+        run: echo ::set-env name=CF_DIST_ID::$(terraform output cfdist)
 
       - name: Deploy
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'

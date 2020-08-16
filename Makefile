@@ -2,13 +2,11 @@
 apply :
 	terraform apply -auto-approve
 
-distId := $(shell terraform output cfdist)
-
 .PHONY : deploy
 deploy : apply build
-	@echo ${distId}
+	@echo ${CF_DIST_ID}
 	aws s3 sync build s3://darrineden.com/ --delete --acl public-read
-	AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${distId} --paths "/*"
+	AWS_PAGER="" aws cloudfront create-invalidation --distribution-id ${CF_DIST_ID} --paths "/*"
 
 .PHONY : test
 test : dev
