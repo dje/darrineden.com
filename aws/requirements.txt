@@ -5,7 +5,7 @@ aws-cdk.aws-apigatewayv2==1.58.0
 aws-cdk.aws-applicationautoscaling==1.58.0
 aws-cdk.aws-autoscaling==1.58.0
 aws-cdk.aws-autoscaling-common==1.58.0
-aws-cdk.aws-autoscaling-hooktargets==1.58.0
+aws-cdk.aws-autoscaling-hooktargets==1.59.0
 aws-cdk.aws-batch==1.58.0
 aws-cdk.aws-certificatemanager==1.58.0
 aws-cdk.aws-cloudformation==1.58.0
