@@ -10,7 +10,7 @@ aws-cdk.aws-batch==1.58.0
 aws-cdk.aws-certificatemanager==1.58.0
 aws-cdk.aws-cloudformation==1.58.0
 aws-cdk.aws-cloudfront==1.58.0
-aws-cdk.aws-cloudwatch==1.58.0
+aws-cdk.aws-cloudwatch==1.59.0
 aws-cdk.aws-codebuild==1.58.0
 aws-cdk.aws-codecommit==1.58.0
 aws-cdk.aws-codeguruprofiler==1.58.0
