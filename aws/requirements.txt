@@ -45,7 +45,7 @@ aws-cdk.aws-ssm==1.59.0
 aws-cdk.aws-stepfunctions==1.59.0
 aws-cdk.cloud-assembly-schema==1.59.0
 aws-cdk.core==1.59.0
-aws-cdk.custom-resources==1.59.0
+aws-cdk.custom-resources==1.61.1
 aws-cdk.cx-api==1.59.0
 aws-cdk.region-info==1.59.0
 cattrs==1.0.0
