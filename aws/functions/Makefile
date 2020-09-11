@@ -1,21 +1,10 @@
 ### Build Tasks
 
-build-functions: build/delete-tweets.zip build/trace-store.zip
-
-build/trace-store.zip : build/trace-store
-	cd build && \
-	zip trace-store.zip trace-store
+build-functions: build/delete-tweets.zip
 
 build/delete-tweets.zip : build/delete-tweets
 	cd build && \
 	zip delete-tweets.zip delete-tweets
-
-trace-store/vendor :
-	cd trace-store && go mod vendor
-
-build/trace-store : build trace-store/vendor
-	cd trace-store && \
-	GOOS=linux go build -o ../build/trace-store trace-store.go
 
 delete-tweets/vendor :
 	cd delete-tweets && go mod vendor
@@ -30,7 +19,7 @@ build :
 
 .PHONY : clean
 clean :
-	rm -rf build delete-tweets/vendor trace-store/vendor
+	rm -rf build delete-tweets/vendor
 
 ### AWS Command Tasks (Secrets and Certificate)
 
