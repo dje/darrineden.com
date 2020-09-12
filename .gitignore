@@ -7,3 +7,6 @@ build/
 # .tfstate files
 *.tfstate
 *.tfstate.*
+
+# terraform autoloaded variables
+*.auto.tfvars

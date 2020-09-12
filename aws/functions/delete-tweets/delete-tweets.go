@@ -8,14 +8,25 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
+	"github.com/honeycombio/libhoney-go"
 )
 
-func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, _ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	ssmsvc := ssm.New(session.Must(session.NewSession()))
+
+	_ = libhoney.Init(libhoney.Config{
+		APIKey:  getSecret(ssmsvc, "/Honeycomb/APIKey"),
+		Dataset: "delete-tweets",
+	})
+
+	defer libhoney.Flush()
+
+	startTime := time.Now()
 
 	config := oauth1.NewConfig(
 		getSecret(ssmsvc, "/DeleteTweets/TwitterClientId"),
@@ -57,6 +68,19 @@ func handler(_ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, e
 			}
 		}
 	}
+
+	lc, _ := lambdacontext.FromContext(ctx)
+
+	ev := libhoney.NewEvent()
+	_ = ev.Add(map[string]interface{}{
+		"message":          "Delete Tweets Lambda",
+		"function_name":    lambdacontext.FunctionName,
+		"function_version": lambdacontext.FunctionVersion,
+		"request_id":       lc.AwsRequestID,
+		"duration_ms":      time.Since(startTime).Milliseconds(),
+		"tweets_deleted":   destroyed,
+	})
+	_ = ev.Send()
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: resp.StatusCode,

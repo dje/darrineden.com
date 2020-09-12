@@ -52,6 +52,11 @@ put-secrets :
 		--value "$(TWITTER_ACCESS_SECRET)" \
 		--type "SecureString" \
 		--overwrite
+	aws ssm put-parameter \
+		--name "/Honeycomb/APIKey" \
+		--value "$(HONEYCOMB_API_KEY)" \
+		--type "SecureString" \
+		--overwrite
 
 .PHONY : delete-secrets
 delete-secrets :
@@ -63,7 +68,9 @@ delete-secrets :
 	aws ssm delete-parameter \
 		--name "/DeleteTweets/TwitterAccessToken" && \
 	aws ssm delete-parameter \
-		--name "/DeleteTweets/TwitterAccessSecret"
+		--name "/DeleteTweets/TwitterAccessSecret" && \
+	aws ssm delete-parameter \
+		--name "/Honeycomb/APIKey"
 
 .PHONY : request-certificate
 request-certificate :
