@@ -6,6 +6,13 @@ on:
       - master
   pull_request:
 
+TerraformEnvironment: &tfenv
+  TF_VAR_honeycomb_api_key: ${{ secrets.HONEYCOMB_API_KEY }}
+  TF_VAR_twitter_client_id: ${{ secrets.TWITTER_CLIENT_ID }}
+  TF_VAR_twitter_client_secret: ${{ secrets.TWITTER_CLIENT_SECRET }}
+  TF_VAR_twitter_access_token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+  TF_VAR_twitter_access_secret: ${{ secrets.TWITTER_ACCESS_SECRET }}
+
 jobs:
   deploy:
     name: 'Deploy'
@@ -33,10 +40,14 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan
+        env:
+          <<: *tfenv
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform apply -auto-approve
+        env:
+          <<: *tfenv
 
       - name: Terraform CloudFront Distribution ID
         id: cfid
