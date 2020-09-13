@@ -201,24 +201,20 @@ resource "aws_ssm_parameter" "honeycomb_api_key" {
   value       = var.honeycomb_api_key
 }
 
-resource "aws_iam_role" "iam_for_lambda" {
-  name = "iam_for_lambda"
+data "aws_iam_policy_document" "assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
     }
-  ]
+  }
 }
-EOF
+
+resource "aws_iam_role" "iam_for_lambda" {
+  name               = "iam_for_lambda"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
 resource "aws_lambda_function" "delete_tweets_lambda" {
@@ -230,6 +226,44 @@ resource "aws_lambda_function" "delete_tweets_lambda" {
   source_code_hash = filebase64sha256("aws/functions/build/delete-tweets.zip")
 
   runtime = "go1.x"
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_logs,
+    aws_cloudwatch_log_group.delete_tweets_log_group,
+  ]
+}
+
+resource "aws_cloudwatch_log_group" "delete_tweets_log_group" {
+  name              = "delete-tweets-lambda"
+  retention_in_days = 14
+}
+
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "lambda_logging"
+  path        = "/"
+  description = "IAM policy for logging from a lambda"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
 }
 
 resource "aws_cloudwatch_event_rule" "every_hour" {
@@ -250,4 +284,32 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_delete_tweets_lambda"
   function_name = aws_lambda_function.delete_tweets_lambda.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.every_hour.arn
+}
+
+
+data "aws_iam_policy_document" "ssm_policy_document" {
+  statement {
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:GetParametersByPath",
+    ]
+
+    resources = [
+      aws_ssm_parameter.twitter_client_id.arn,
+      aws_ssm_parameter.twitter_client_secret.arn,
+      aws_ssm_parameter.twitter_access_token.arn,
+      aws_ssm_parameter.twitter_access_secret.arn,
+      aws_ssm_parameter.honeycomb_api_key.arn,
+    ]
+  }
+}
+
+resource "aws_iam_policy" "ssm_policy" {
+  policy = data.aws_iam_policy_document.ssm_policy_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_policy_attachment" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.ssm_policy.arn
 }
