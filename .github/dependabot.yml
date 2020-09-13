@@ -1,21 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/aws"
-    schedule:
-      interval: "daily"
-
   - package-ecosystem: "gomod"
     directory: "/aws/functions/delete-tweets"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "gomod"
-    directory: "/aws/functions/trace-store"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "elm"
-    directory: "/netlify"
     schedule:
       interval: "daily"

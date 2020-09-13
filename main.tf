@@ -234,7 +234,7 @@ resource "aws_lambda_function" "delete_tweets_lambda" {
 }
 
 resource "aws_cloudwatch_log_group" "delete_tweets_log_group" {
-  name              = "delete-tweets-lambda"
+  name              = "/aws/lambda/delete-tweets"
   retention_in_days = 14
 }
 
