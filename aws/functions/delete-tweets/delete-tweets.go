@@ -14,6 +14,7 @@ import (
 	"github.com/dghubble/oauth1"
 	"github.com/honeycombio/opentelemetry-exporter-go/honeycomb"
 	"go.opentelemetry.io/otel/api/global"
+	"go.opentelemetry.io/otel/api/kv"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
@@ -84,6 +85,8 @@ func handler(ctx context.Context, _ events.APIGatewayProxyRequest) (events.APIGa
 			}
 		}
 	}
+
+	span.AddEvent(ctx, "results", kv.Int("tweets-deleted", destroyed))
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: resp.StatusCode,
