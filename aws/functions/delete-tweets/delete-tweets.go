@@ -8,25 +8,41 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
-	"github.com/honeycombio/libhoney-go"
+	"github.com/honeycombio/opentelemetry-exporter-go/honeycomb"
+	"go.opentelemetry.io/otel/api/global"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 func handler(ctx context.Context, _ events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	ssmsvc := ssm.New(session.Must(session.NewSession()))
 
-	_ = libhoney.Init(libhoney.Config{
-		APIKey:  getSecret(ssmsvc, "/Honeycomb/APIKey"),
-		Dataset: "delete-tweets",
-	})
+	exporter, err := honeycomb.NewExporter(
+		honeycomb.Config{
+			APIKey: getSecret(ssmsvc, "/Honeycomb/APIKey"),
+		},
+		honeycomb.TargetingDataset("delete-tweets"),
+		honeycomb.WithServiceName("delete-tweets aws lambda"),
+		honeycomb.WithDebugEnabled())
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer exporter.Close()
 
-	defer libhoney.Flush()
+	tp, err := sdktrace.NewProvider(sdktrace.WithConfig(sdktrace.Config{DefaultSampler: sdktrace.AlwaysSample()}),
+		sdktrace.WithSyncer(exporter))
+	if err != nil {
+		log.Fatal(err)
+	}
+	global.SetTraceProvider(tp)
 
-	startTime := time.Now()
+	tracer := global.TraceProvider().Tracer("aws/lambda/delete-tweets")
+
+	ctx, span := tracer.Start(ctx, "delete-tweets")
+	defer span.End()
 
 	config := oauth1.NewConfig(
 		getSecret(ssmsvc, "/DeleteTweets/TwitterClientId"),
@@ -37,7 +53,7 @@ func handler(ctx context.Context, _ events.APIGatewayProxyRequest) (events.APIGa
 		getSecret(ssmsvc, "/DeleteTweets/TwitterAccessSecret"),
 	)
 
-	httpClient := config.Client(context.Background(), token)
+	httpClient := config.Client(ctx, token)
 	client := twitter.NewClient(httpClient)
 
 	tweets, resp, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{Count: 100})
@@ -68,19 +84,6 @@ func handler(ctx context.Context, _ events.APIGatewayProxyRequest) (events.APIGa
 			}
 		}
 	}
-
-	lc, _ := lambdacontext.FromContext(ctx)
-
-	ev := libhoney.NewEvent()
-	_ = ev.Add(map[string]interface{}{
-		"message":          "Delete Tweets Lambda",
-		"function_name":    lambdacontext.FunctionName,
-		"function_version": lambdacontext.FunctionVersion,
-		"request_id":       lc.AwsRequestID,
-		"duration_ms":      time.Since(startTime).Milliseconds(),
-		"tweets_deleted":   destroyed,
-	})
-	_ = ev.Send()
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: resp.StatusCode,
