@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	"github.com/honeycombio/opentelemetry-exporter-go/honeycomb"
@@ -54,7 +55,7 @@ func handler(ctx context.Context, _ events.APIGatewayProxyRequest) (events.APIGa
 		getSecret(ssmsvc, "/DeleteTweets/TwitterAccessSecret"),
 	)
 
-	httpClient := config.Client(ctx, token)
+	httpClient := xray.Client(config.Client(ctx, token))
 	client := twitter.NewClient(httpClient)
 
 	tweets, resp, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{Count: 100})
@@ -86,7 +87,7 @@ func handler(ctx context.Context, _ events.APIGatewayProxyRequest) (events.APIGa
 		}
 	}
 
-	span.AddEvent(ctx, "results", kv.Int("tweets-deleted", destroyed))
+	span.AddEvent(ctx, "results", kv.Int("tweets_deleted", destroyed))
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: resp.StatusCode,
