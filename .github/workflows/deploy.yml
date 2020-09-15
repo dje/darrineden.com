@@ -28,14 +28,14 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Init
-        run: terraform init terraform
+        run: cd terraform && terraform init
 
       - name: Terraform Format
-        run: terraform fmt -check terraform
+        run: cd terraform && terraform fmt -check
         continue-on-error: true
 
       - name: Terraform Plan
-        run: terraform plan terraform
+        run: cd terraform && terraform plan
         env:
           TF_VAR_honeycomb_api_key: ${{ secrets.HONEYCOMB_API_KEY }}
           TF_VAR_twitter_client_id: ${{ secrets.TWITTER_CLIENT_ID }}
@@ -45,7 +45,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform apply -auto-approve terraform
+        run: cd terraform && terraform apply -auto-approve
         env:
           TF_VAR_honeycomb_api_key: ${{ secrets.HONEYCOMB_API_KEY }}
           TF_VAR_twitter_client_id: ${{ secrets.TWITTER_CLIENT_ID }}
@@ -55,7 +55,7 @@ jobs:
 
       - name: Terraform CloudFront Distribution ID
         id: cfid
-        run: terraform output cfdist
+        run: cd terraform && terraform output cfdist
 
       - name: Build
         run: make build
