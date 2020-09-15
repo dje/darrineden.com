@@ -75,7 +75,7 @@ resource "aws_lambda_function" "delete_tweets_lambda" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "delete-tweets"
 
-  source_code_hash = filebase64sha256("../aws/functions/build/delete-tweets.zip")
+  source_code_hash = filebase64sha256("aws/functions/build/delete-tweets.zip")
 
   runtime = "go1.x"
 
