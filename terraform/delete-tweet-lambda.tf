@@ -70,7 +70,7 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 resource "aws_lambda_function" "delete_tweets_lambda" {
-  filename      = "delete-tweets.zip"
+  filename      = "../aws/functions/build/delete-tweets.zip"
   function_name = "delete-tweets"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "delete-tweets"
