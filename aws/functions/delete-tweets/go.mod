@@ -11,6 +11,6 @@ require (
 	github.com/dghubble/oauth1 v0.6.0
 	github.com/honeycombio/libhoney-go v1.14.0 // indirect
 	github.com/honeycombio/opentelemetry-exporter-go v0.10.0
-	go.opentelemetry.io/otel v0.10.0
-	go.opentelemetry.io/otel/sdk v0.10.0
+	go.opentelemetry.io/otel v0.11.0
+	go.opentelemetry.io/otel/sdk v0.11.0
 )
