@@ -4,3 +4,8 @@ updates:
     directory: "/aws/functions/delete-tweets"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "gomod"
+    directory: "/aws/functions/carbon"
+    schedule:
+      interval: "daily"

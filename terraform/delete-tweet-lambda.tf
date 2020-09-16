@@ -90,27 +90,24 @@ resource "aws_cloudwatch_log_group" "delete_tweets_log_group" {
   retention_in_days = 14
 }
 
+data "aws_iam_policy_document" "lambda_logging_policy" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+}
+
 resource "aws_iam_policy" "lambda_logging" {
   name        = "lambda_logging"
   path        = "/"
-  description = "IAM policy for logging from a lambda"
+  description = "policy for lambda logging"
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Resource": "arn:aws:logs:*:*:*",
-      "Effect": "Allow"
-    }
-  ]
-}
-EOF
+  policy = data.aws_iam_policy_document.lambda_logging_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
