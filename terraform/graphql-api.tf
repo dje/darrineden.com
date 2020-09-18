@@ -70,7 +70,7 @@ resource "aws_appsync_datasource" "carbon_lambda" {
 
 resource "aws_appsync_resolver" "carbon" {
   api_id      = aws_appsync_graphql_api.carbon.id
-  field       = "atmosphericCarbonTons"
+  field       = "atmosphericCarbonTonsToRemove"
   type        = "Query"
   data_source = aws_appsync_datasource.carbon_lambda.name
 
@@ -79,7 +79,7 @@ resource "aws_appsync_resolver" "carbon" {
     "version": "2017-02-28",
     "operation": "Invoke",
     "payload": {
-        "field": "atmosphericCarbonTons",
+        "field": "atmosphericCarbonTonsToRemove",
         "arguments": $utils.toJson($context.arguments)
     }
 }

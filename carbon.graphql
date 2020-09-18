@@ -3,5 +3,5 @@ schema {
 }
 
 type Query {
-    atmosphericCarbonTons: Int
+    atmosphericCarbonTonsToRemove: Float
 }

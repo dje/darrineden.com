@@ -6,8 +6,9 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func handler(_ context.Context) (int, error) {
-	return 0, nil
+func handler(_ context.Context) (float64, error) {
+	atmosphericCarbonTonsToRemove := 9e11
+	return atmosphericCarbonTonsToRemove, nil
 }
 
 func main() {
