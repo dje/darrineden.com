@@ -113,7 +113,7 @@ resource "aws_iam_role_policy" "carbon" {
   "Statement": [
     {
       "Action": [
-        "lambda:*"
+        "lambda:InvokeFunction"
       ],
       "Effect": "Allow",
       "Resource": [
