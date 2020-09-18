@@ -53,7 +53,7 @@ resource "aws_ssm_parameter" "honeycomb_api_key" {
   value       = var.honeycomb_api_key
 }
 
-data "aws_iam_policy_document" "assume_role_policy" {
+data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     actions = ["sts:AssumeRole"]
 
@@ -64,15 +64,14 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
-resource "aws_iam_role" "iam_for_lambda" {
-  name               = "iam_for_lambda"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+resource "aws_iam_role" "delete_tweet_lambda" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
 resource "aws_lambda_function" "delete_tweets_lambda" {
   filename      = "../aws/functions/build/delete-tweets.zip"
   function_name = "delete-tweets"
-  role          = aws_iam_role.iam_for_lambda.arn
+  role          = aws_iam_role.delete_tweet_lambda.arn
   handler       = "delete-tweets"
 
   source_code_hash = filebase64sha256("../aws/functions/build/delete-tweets.zip")
@@ -111,7 +110,7 @@ resource "aws_iam_policy" "lambda_logging" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.iam_for_lambda.name
+  role       = aws_iam_role.delete_tweet_lambda.name
   policy_arn = aws_iam_policy.lambda_logging.arn
 }
 
@@ -158,6 +157,6 @@ resource "aws_iam_policy" "ssm_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "ssm_policy_attachment" {
-  role       = aws_iam_role.iam_for_lambda.name
+  role       = aws_iam_role.delete_tweet_lambda.name
   policy_arn = aws_iam_policy.ssm_policy.arn
 }
