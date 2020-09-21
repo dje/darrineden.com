@@ -1,22 +1,20 @@
-import React from 'react';
+import React from 'react'
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import {Home, Carbon} from './Pages'
 
-function App() {
-    return (
-        <div>
-            <p>Greetings,</p>
-            <p>This is a site about Darrin Eden.</p>
-            <p>Want to learn more about me? Here are places to connect:</p>
-            <ul>
-                <li><a href="https://github.com/dje">GitHub</a></li>
-                <li><a href="https://storage.googleapis.com/darrineden/Darrin_Eden_Resume.docx">Résumé (word)</a> <a href="https://storage.googleapis.com/darrineden/Darrin_Eden_Resume.pdf">(pdf)</a></li>
-                <li><a href="https://www.linkedin.com/in/darrin-eden">LinkedIn</a></li>
-                <li><a href="https://twitter.com/DarrinEden">Twitter</a></li>
-                <li><a href="https://www.instagram.com/darrin.eden">Instagram</a></li>
-            </ul>
-            <p>Thanks for visiting!</p>
-            <p>Last update: 2020 August 15</p>
-        </div>
-    );
+class App extends React.Component {
+    render() {
+        return (
+            <Router>
+                <div>
+                    <Switch>
+                        <Route exact path="/" component={Home}/>
+                        <Route exact path="/carbon" component={Carbon}/>
+                    </Switch>
+                </div>
+            </Router>
+        )
+    }
 }
 
-export default App;
+export default App
