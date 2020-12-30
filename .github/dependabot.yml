@@ -9,3 +9,8 @@ updates:
     directory: "/aws/functions/carbon"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
