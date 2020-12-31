@@ -6,8 +6,8 @@ github.com/DataDog/sketches-go v0.0.1/go.mod h1:Q5DbzQ+3AkgGwymQO7aZFNP7ns2lZKGt
 github.com/DataDog/zstd v1.4.4/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
 github.com/DataDog/zstd v1.4.5 h1:EndNeuB0l9syBZhut0wns3gV1hL8zX8LIu6ZiVHWLIQ=
 github.com/DataDog/zstd v1.4.5/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
-github.com/aws/aws-lambda-go v1.21.0 h1:6fF3tSipETaUQbTmo9zPcMlVYM/Khm9rYb94jJseHRs=
-github.com/aws/aws-lambda-go v1.21.0/go.mod h1:jJmlefzPfGnckuHdXX7/80O3BvUUi12XOkbv4w9SGLU=
+github.com/aws/aws-lambda-go v1.22.0 h1:X7BKqIdfoJcbsEIi+Lrt5YjX1HnZexIbNWOQgkYKgfE=
+github.com/aws/aws-lambda-go v1.22.0/go.mod h1:jJmlefzPfGnckuHdXX7/80O3BvUUi12XOkbv4w9SGLU=
 github.com/aws/aws-sdk-go v1.17.12/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.36.18 h1:PvfZkE0cjM1k1EMQDSb2BrX8LETPx0IFFZ/YKkurmFg=
 github.com/aws/aws-sdk-go v1.36.18/go.mod h1:hcU610XS61/+aQV88ixoOzUoG7v3b31pl2zKMmprdro=
