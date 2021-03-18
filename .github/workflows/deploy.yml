@@ -18,6 +18,7 @@ jobs:
         run: cd aws/functions && make
 
       - name: Configure AWS Credentials
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
