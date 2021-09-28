@@ -3,7 +3,7 @@ module delete-tweets
 go 1.15
 
 require (
-	github.com/aws/aws-lambda-go v1.26.0
+	github.com/aws/aws-lambda-go v1.27.0
 	github.com/aws/aws-sdk-go v1.40.49
 	github.com/aws/aws-xray-sdk-go v1.6.0
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
