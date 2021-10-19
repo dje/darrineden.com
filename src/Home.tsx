@@ -13,5 +13,5 @@ export const Home = () =>
             <li><a href="https://www.instagram.com/darrin.eden">Instagram</a></li>
         </ul>
         <p>Thanks for visiting!</p>
-        <p>Last update: 2020 August 15</p>
+        <p>Last update: 2021 October 18</p>
     </div>
