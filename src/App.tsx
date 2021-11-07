@@ -9,7 +9,7 @@ const createApolloClient = () => {
     return new ApolloClient({
         cache: new InMemoryCache(),
         uri: "https://63sahjvltfatfii2yzjuj5jrjy.appsync-api.us-west-2.amazonaws.com/graphql",
-        headers: {"x-api-key": ""},
+        headers: {"x-api-key": "da2-iyppakxm5nfrtiwavyghhpltzq"},
     })
 }
 
@@ -19,8 +19,8 @@ class App extends React.Component {
             <ApolloProvider client={createApolloClient()}>
                 <Router>
                     <Routes>
-                        <Route path="/" element={<Home/>} />
-                        <Route path="/carbon" element={<Carbon/>} />
+                        <Route path="/" element={<Home/>}/>
+                        <Route path="/carbon" element={<Carbon/>}/>
                     </Routes>
                 </Router>
             </ApolloProvider>
