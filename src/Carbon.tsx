@@ -14,7 +14,7 @@ export const Carbon = () => {
         <div>
             <h1>Atmospheric Carbon Removal Goal</h1>
             {loading? (<p>Loading...</p>) : (
-                <p>{data?.atmosphericCarbonTonsToRemove}</p>
+                <p>{data?.atmosphericCarbonTonsToRemove} metric tons</p>
             )}
         </div>
     )
