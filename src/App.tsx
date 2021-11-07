@@ -1,5 +1,5 @@
 import React from "react"
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom"
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom"
 import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client"
 
 import {Home} from "./Home"
@@ -18,10 +18,10 @@ class App extends React.Component {
         return (
             <ApolloProvider client={createApolloClient()}>
                 <Router>
-                    <Switch>
-                        <Route exact path="/" component={Home}/>
-                        <Route exact path="/carbon" component={Carbon}/>
-                    </Switch>
+                    <Routes>
+                        <Route path="/" element={<Home/>} />
+                        <Route path="/carbon" element={<Carbon/>} />
+                    </Routes>
                 </Router>
             </ApolloProvider>
         )
