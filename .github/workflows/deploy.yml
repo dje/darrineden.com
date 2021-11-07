@@ -55,8 +55,12 @@ jobs:
         id: cfid
         run: cd terraform && terraform output cfdist
 
+      - name: Terraform AppSync API Key
+        id: appsync_key
+        run: cd terraform && terraform output appsync_key
+
       - name: Build
-        run: make build
+        run: GRAPHQL_API_KEY=${{ steps.appsync_key.outputs.stdout }} make build
 
       - name: AWS Directory Sync
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'

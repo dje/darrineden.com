@@ -124,3 +124,8 @@ resource "aws_iam_role_policy" "carbon" {
 }
 EOF
 }
+
+output "appsync_key" {
+  value     = aws_appsync_api_key.test.key
+  sensitive = true
+}
