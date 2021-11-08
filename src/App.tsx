@@ -9,7 +9,7 @@ const createApolloClient = () => {
     return new ApolloClient({
         cache: new InMemoryCache(),
         uri: "https://63sahjvltfatfii2yzjuj5jrjy.appsync-api.us-west-2.amazonaws.com/graphql",
-        headers: {"x-api-key": "da2-iyppakxm5nfrtiwavyghhpltzq"},
+        headers: {"x-api-key": "da2-xhjn6hn7rndkjonkl27ubo4dha"},
     })
 }
 
