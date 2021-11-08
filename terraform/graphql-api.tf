@@ -4,7 +4,7 @@ resource "aws_cognito_identity_pool" "unauthenticated" {
 }
 
 resource "aws_appsync_graphql_api" "carbon" {
-  authentication_type = "AWS_IAM"
+  authentication_type = "AMAZON_COGNITO_USER_POOLS"
   name                = "carbon_api"
   schema              = file("../carbon.graphql")
   xray_enabled        = true
