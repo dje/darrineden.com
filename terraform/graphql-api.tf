@@ -1,18 +1,13 @@
-resource "aws_cognito_identity_pool" "unauthenticated" {
-  identity_pool_name               = "unauthenticated identity pool"
-  allow_unauthenticated_identities = true
+resource "aws_appsync_api_key" "test" {
+  api_id  = aws_appsync_graphql_api.carbon.id
+  expires = "2022-01-01T00:00:00Z"
 }
 
 resource "aws_appsync_graphql_api" "carbon" {
-  authentication_type = "AMAZON_COGNITO_USER_POOLS"
+  authentication_type = "API_KEY"
   name                = "carbon_api"
   schema              = file("../carbon.graphql")
   xray_enabled        = true
-
-  user_pool_config {
-    user_pool_id   = aws_cognito_identity_pool.unauthenticated.id
-    default_action = "ALLOW"
-  }
 }
 
 resource "aws_iam_role" "carbon_lambda" {
