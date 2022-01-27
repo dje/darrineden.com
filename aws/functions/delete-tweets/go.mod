@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/aws/aws-lambda-go v1.28.0
-	github.com/aws/aws-sdk-go v1.42.41
+	github.com/aws/aws-sdk-go v1.42.42
 	github.com/aws/aws-xray-sdk-go v1.6.0
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f
