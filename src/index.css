@@ -1,3 +1,3 @@
-p, a {
+p, a, li {
     font-size: calc(1rem + 0.75vw);
 }
