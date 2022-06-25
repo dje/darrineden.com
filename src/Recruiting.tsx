@@ -5,7 +5,7 @@ export const Recruiting = () =>
         <p>Hello,</p>
         <p>Thank you for reaching out. My apologies for this canned response. Out of respect for your time I'd like to share some points to help self-select which conversations should move forward:</p>
         <ol>
-            <li>My salary is currently in the $200k to $300k range. Opportunities with a significant social good mission are an exception to this requirement. Equity as part of total compensation is a separate conversation.</li>
+            <li>My salary is currently in the $200k to $300k range. Opportunities with a significant social good mission are excepted from this requirement. Equity as part of total compensation is a separate conversation.</li>
             <li>I believe "leetcode" (puzzle style) performative coding is a poor example of common on-the-job problems. Instead it selects those who have managed their performance anxiety and have time to practice. I'm searching for companies thinking beyond this gatekeeping mechanism. Let's analyze an open-source project or debug a problem instead.</li>
             <li>I live in Portland, Oregon and I'm not considering relocation. I've worked remotely for the majority of my career. I'm a dual citizen of the U.S. and Canada.</li>
         </ol>
