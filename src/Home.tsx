@@ -10,9 +10,9 @@ export const Home = () =>
             <li><a href="https://storage.googleapis.com/darrineden/Darrin_Eden_Resume.pdf">Resume</a></li>
             <li><a href="https://www.linkedin.com/in/darrin-eden">LinkedIn</a></li>
             <li><a href="https://mastodon.social/@dje">Mastodon</a></li>
-            <li><a style="text-decoration: line-through;" href="https://twitter.com/DarrinEden">Twitter</a></li>
+            <li><s><a href="https://twitter.com/DarrinEden">Twitter</a></s></li>
             <li><a href="https://www.instagram.com/darrin.eden">Instagram</a></li>
         </ul>
         <p>Thanks for visiting!</p>
-        <p>Last update: 2021 October 18</p>
+        <p>Last update: 2022 November 5</p>
     </div>
