@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.154
 	github.com/aws/aws-xray-sdk-go v1.8.0
 	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f
-	github.com/dghubble/oauth1 v0.7.1
+	github.com/dghubble/oauth1 v0.7.2
 	github.com/honeycombio/opentelemetry-exporter-go v0.10.0
 	go.opentelemetry.io/otel v0.10.0
 	go.opentelemetry.io/otel/sdk v0.10.0
