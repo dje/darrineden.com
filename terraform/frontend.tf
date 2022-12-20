@@ -1,14 +1,26 @@
-resource "aws_s3_bucket" "site" {
-  acl    = "public-read"
-  bucket = "darrineden.com"
-
-  website {
-    index_document = "index.html"
-  }
-}
-
 locals {
   s3_origin_id = "darrinedenS3Origin"
+}
+
+resource "aws_s3_bucket" "site" {
+  bucket = "darrineden.com"
+}
+
+resource "aws_s3_bucket_acl" "example_bucket_acl" {
+  bucket = aws_s3_bucket.site.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_website_configuration" "site" {
+  bucket = aws_s3_bucket.site.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
 }
 
 resource "aws_cloudfront_distribution" "dist" {
@@ -21,7 +33,7 @@ resource "aws_cloudfront_distribution" "dist" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = ["darrineden.com", "test.darrineden.com"]
+  aliases = ["darrineden.com", "*.darrineden.com"]
 
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD"]
