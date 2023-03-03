@@ -1,6 +1,6 @@
 resource "aws_appsync_api_key" "test" {
   api_id  = aws_appsync_graphql_api.carbon.id
-  expires = "2023-01-01T00:00:00Z"
+  expires = "2024-01-01T00:00:00Z"
 }
 
 resource "aws_appsync_graphql_api" "carbon" {
