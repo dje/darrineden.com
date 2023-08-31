@@ -19,6 +19,35 @@ resource "aws_route53_record" "record_ipv4" {
   }
 }
 
+resource "aws_route53_record" "mx_records" {
+  zone_id = aws_route53_zone.zone.zone_id
+  name    = "darrineden.com"
+  type    = "MX"
+  ttl     = "300"
+  records = [
+    "10 in1-smtp.messagingengine.com",
+    "20 in2-smtp.messagingengine.com",
+  ]
+}
+
+resource "aws_route53_record" "dkim_records" {
+  count   = 3
+  zone_id = aws_route53_zone.zone.zone_id
+  name    = "fm${count.index + 1}._domainkey"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["fm${count.index + 1}.darrineden.com.dkim.fmhosted.com"]
+}
+
+resource "aws_route53_record" "spf_record" {
+  zone_id = aws_route53_zone.zone.zone_id
+  name    = "darrineden.com"
+  type    = "TXT"
+  ttl     = "300"
+  records = ["v=spf1 include:spf.messagingengine.com ?all"]
+}
+
+
 resource "aws_route53_record" "record_wildcard_ipv4" {
   zone_id = aws_route53_zone.zone.zone_id
   name    = "*.darrineden.com"
