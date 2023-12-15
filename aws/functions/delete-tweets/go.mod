@@ -3,7 +3,7 @@ module delete-tweets
 go 1.19
 
 require (
-	github.com/aws/aws-lambda-go v1.41.0
+	github.com/aws/aws-lambda-go v1.42.0
 	github.com/aws/aws-sdk-go v1.49.3
 	github.com/aws/aws-xray-sdk-go v1.8.3
 	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f
