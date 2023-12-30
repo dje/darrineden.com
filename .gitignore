@@ -7,3 +7,4 @@
 
 # terraform autoloaded variables
 *.auto.tfvars
+.direnv/
