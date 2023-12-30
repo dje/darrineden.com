@@ -11,20 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build Delete Tweet Function
-        run: cd aws/functions && make
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: cd terraform && terraform init
@@ -35,32 +32,17 @@ jobs:
 
       - name: Terraform Plan
         run: cd terraform && terraform plan
-        env:
-          TF_VAR_honeycomb_api_key: ${{ secrets.HONEYCOMB_API_KEY }}
-          TF_VAR_twitter_client_id: ${{ secrets.TWITTER_CLIENT_ID }}
-          TF_VAR_twitter_client_secret: ${{ secrets.TWITTER_CLIENT_SECRET }}
-          TF_VAR_twitter_access_token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          TF_VAR_twitter_access_secret: ${{ secrets.TWITTER_ACCESS_SECRET }}
 
       - name: Terraform Apply
         run: cd terraform && terraform apply -auto-approve
-        env:
-          TF_VAR_honeycomb_api_key: ${{ secrets.HONEYCOMB_API_KEY }}
-          TF_VAR_twitter_client_id: ${{ secrets.TWITTER_CLIENT_ID }}
-          TF_VAR_twitter_client_secret: ${{ secrets.TWITTER_CLIENT_SECRET }}
-          TF_VAR_twitter_access_token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          TF_VAR_twitter_access_secret: ${{ secrets.TWITTER_ACCESS_SECRET }}
 
       - name: Terraform CloudFront Distribution ID
         id: cfid
         run: cd terraform && terraform output cfdist
 
-      - name: Build
-        run: make build
-
       - name: AWS Directory Sync
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: aws s3 sync build s3://darrineden.com/ --delete --acl public-read
+        run: aws s3 sync public s3://darrineden.com/ --delete --acl public-read
 
       - name: AWS Invalidate CloudFront Distribution
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
