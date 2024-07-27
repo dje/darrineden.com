@@ -47,6 +47,13 @@ resource "aws_route53_record" "spf_record" {
   records = ["v=spf1 include:spf.messagingengine.com ?all"]
 }
 
+resource "aws_route53_record" "bluesky_record" {
+  zone_id = aws_route53_zone.zone.zone_id
+  name    = "_atproto.darrineden.com"
+  type    = "TXT"
+  ttl     = "300"
+  records = ["did=did:plc:bbevnrmydflnzjqge5ctlqlz"]
+}
 
 resource "aws_route53_record" "record_wildcard_ipv4" {
   zone_id = aws_route53_zone.zone.zone_id
