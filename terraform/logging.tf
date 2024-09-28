@@ -20,6 +20,16 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs_lifecycle" {
       days = 180
     }
   }
+
+  rule {
+    id     = "onezone-tier"
+    status = "Enabled"
+
+    transition {
+      storage_class = "ONEZONE_IA"
+      days          = 30
+    }
+  }
 }
 
 resource "aws_s3_bucket_acl" "logs_acl" {
