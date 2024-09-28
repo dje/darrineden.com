@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "site" {
   bucket = "darrineden.com"
 }
 
-resource "aws_s3_bucket_acl" "example_bucket_acl" {
+resource "aws_s3_bucket_acl" "public_read_acl" {
   bucket = aws_s3_bucket.site.id
   acl    = "public-read"
 }
@@ -68,8 +68,17 @@ resource "aws_cloudfront_distribution" "dist" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate_validation.validation.certificate_arn
-    ssl_support_method  = "sni-only"
+    acm_certificate_arn      = aws_acm_certificate_validation.validation.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
+
+  http_version = "http2and3"
+
+  logging_config {
+    include_cookies = false
+    bucket          = aws_s3_bucket.logs.bucket_regional_domain_name
+    prefix          = "cloudfront-logs/"
   }
 }
 
