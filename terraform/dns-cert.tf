@@ -23,28 +23,19 @@ resource "aws_route53_record" "mx_records" {
   zone_id = aws_route53_zone.zone.zone_id
   name    = "darrineden.com"
   type    = "MX"
-  ttl     = "300"
+  ttl     = "3600"
   records = [
-    "10 in1-smtp.messagingengine.com",
-    "20 in2-smtp.messagingengine.com",
+    "10 mx1.forwardemail.net",
+    "10 mx2.forwardemail.net",
   ]
 }
 
-resource "aws_route53_record" "dkim_records" {
-  count   = 3
+resource "aws_route53_record" "forwardemail_txt_record" {
   zone_id = aws_route53_zone.zone.zone_id
-  name    = "fm${count.index + 1}._domainkey"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["fm${count.index + 1}.darrineden.com.dkim.fmhosted.com"]
-}
-
-resource "aws_route53_record" "spf_record" {
-  zone_id = aws_route53_zone.zone.zone_id
-  name    = "darrineden.com"
+  name    = ""
   type    = "TXT"
-  ttl     = "300"
-  records = ["v=spf1 include:spf.messagingengine.com ?all"]
+  ttl     = "3600"
+  records = ["forward-email=NDAwZTcxNmQyZjc2YzE4YS04YmZlMjQ5ZWUxNDI4YzgyYjkwZjk0MDY4NzUzZGU3MDRhYjgxMDdjNDMxZmJhNWE4Yzg0MTZkNTU4MDk0YTAy"]
 }
 
 resource "aws_route53_record" "bluesky_record" {
