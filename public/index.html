@@ -2,29 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="manifest" href="manifest.json" />
+    <title>About Darrin Eden</title>
     <style>
-        p, a, li { font-size: calc(1rem + 0.75vw); }
+        body {
+            max-width: 650px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+        }
+        .social-links {
+            margin: 2rem 0;
+        }
     </style>
-    <title>Darrin Eden</title>
 </head>
 <body>
-<div>
-    <p>Greetings,</p>
-    <p>This is a site about Darrin Eden.</p>
-    <p>Want to learn more about me? Here are places to connect:</p>
-    <ul>
-        <li><a href="https://bsky.app/profile/darrineden.com">Bluesky</a></li>
-        <li><a href="https://tinnies.club/@dje" rel="me">Fediverse</a></li>
-        <li><a href="https://github.com/dje">GitHub</a></li>
-        <li><a href="https://www.instagram.com/darrin.eden">Instagram</a></li>
-        <li><a href="https://www.linkedin.com/in/darrin-eden">LinkedIn</a></li>
-        <li><a href="Darrin-Eden-Resume.pdf">Résumé</a></li>
-    </ul>
-    <p>Thanks for visiting!</p>
-    <p>Last update: 2024 November 12</p>
-</div>
+<main>
+    <article>
+        <h1>Darrin Eden</h1>
+        <p>Greetings,<br/>This is a site about Darrin Eden.<br/>Want to learn more about me? Here are places to connect:</p>
+        <nav class="social-links">
+            <ul>
+                <li><a href="https://bsky.app/profile/darrineden.com">Bluesky</a></li>
+                <li><a href="https://tinnies.club/@dje" rel="me">Fediverse</a></li>
+                <li><a href="https://github.com/dje">GitHub</a></li>
+                <li><a href="https://www.instagram.com/darrin.eden">Instagram</a></li>
+                <li><a href="https://www.linkedin.com/in/darrin-eden">LinkedIn</a></li>
+                <li><a href="Darrin-Eden-Resume.pdf">Résumé</a></li>
+            </ul>
+        </nav>
+        <p>Thanks for visiting!</p>
+        <footer>
+            <p><small>Last update: 2024 November 12</small></p>
+        </footer>
+    </article>
+</main>
 </body>
 </html>
